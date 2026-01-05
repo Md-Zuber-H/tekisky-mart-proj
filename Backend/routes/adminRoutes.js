@@ -3,6 +3,8 @@ import { getAllUsers, getAdminStats, getAllOrders } from "../controllers/adminCo
 import { protect } from "../middleware/authMiddleware.js";
 import  {isAdmin}  from "../middleware/adminMiddleware.js";
 import { updateOrderStatus } from "../controllers/adminController.js";
+import { toggleBlockUser } from "../controllers/adminController.js";
+
 
 
 const router = express.Router();
@@ -11,5 +13,7 @@ router.get("/users", protect, isAdmin, getAllUsers);
 router.get("/stats", protect, isAdmin, getAdminStats);
 router.get("/orders", protect, isAdmin, getAllOrders);
 router.put("/orders/:id/status",protect,isAdmin, updateOrderStatus);
+router.put("/users/:id/block",protect,isAdmin,toggleBlockUser);
+
 
 export default router;

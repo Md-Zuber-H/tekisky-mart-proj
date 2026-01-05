@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    
     name: {
       type: String,
       required: true,
@@ -21,7 +22,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["user", "admin"],
       default: "user"
-    }
+    },
+    isBlocked: {
+  type: Boolean,
+  default: false
+}
+
   },
   { timestamps: true }
 );

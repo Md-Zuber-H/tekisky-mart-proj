@@ -12,8 +12,8 @@ const AdminUsers = () => {
         "http://localhost:5000/api/admin/users",
         {
           headers: {
-            Authorization: `Bearer ${userInfo.token}`
-          }
+            Authorization: `Bearer ${userInfo.token}`,
+          },
         }
       );
       setUsers(data);
@@ -21,6 +21,24 @@ const AdminUsers = () => {
 
     fetchUsers();
   }, []);
+
+  const toggleBlock = async (userId) => {
+    await axios.put(
+      `http://localhost:5000/api/admin/users/${userId}/block`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+    );
+
+    setUsers((prev) =>
+      prev.map((user) =>
+        user._id === userId ? { ...user, isBlocked: !user.isBlocked } : user
+      )
+    );
+  };
 
   return (
     <div className="p-6">
@@ -36,13 +54,26 @@ const AdminUsers = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
+          {users.map((user) => (
             <tr key={user._id}>
               <td className="border p-2">{user.name}</td>
               <td className="border p-2">{user.email}</td>
               <td className="border p-2">{user.role}</td>
               <td className="border p-2">
                 {new Date(user.createdAt).toLocaleDateString()}
+              </td>
+              <td className="border p-2">
+                <button
+                  onClick={() => toggleBlock(user._id)}
+                  className={`px-3 py-1 rounded text-white ${
+                    user.isBlocked ? "bg-green-600" : "bg-red-600"
+                  }`}
+                >
+                  {user.isBlocked ? "Unblock" : "Block"}
+                </button>
+              </td>
+              <td className="border p-2">
+                {user.isBlocked ? "🚫 Blocked" : "✅ Active"}
               </td>
             </tr>
           ))}

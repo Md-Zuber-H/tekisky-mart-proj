@@ -82,3 +82,33 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
+
+/**
+ * @desc   Block / Unblock user
+ * @route  PUT /api/admin/users/:id/block
+ * @access Admin
+ */
+export const toggleBlockUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role === "admin") {
+      return res.status(400).json({ message: "Cannot block admin" });
+    }
+
+    user.isBlocked = !user.isBlocked;
+    await user.save();
+
+    res.json({
+      message: user.isBlocked ? "User blocked" : "User unblocked",
+      isBlocked: user.isBlocked
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
