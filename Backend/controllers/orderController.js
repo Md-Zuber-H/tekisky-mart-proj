@@ -38,8 +38,14 @@ export const placeOrder = async (req, res) => {
 };
 
 export const getMyOrders = async (req, res) => {
-  const orders = await Order.find({ user: req.user._id });
-  res.json(orders);
+   try {
+    const orders = await Order.find({ user: req.user._id })
+      .sort({ createdAt: -1 });
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 export const updateOrderStatus = async (req, res) => {
@@ -48,3 +54,4 @@ export const updateOrderStatus = async (req, res) => {
   await order.save();
   res.json(order);
 };
+

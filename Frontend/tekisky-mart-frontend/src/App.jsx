@@ -18,6 +18,8 @@ import AddProduct from "./pages/admin/AddProduct";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 // import Dashboard from "./pages/admin/Dashboard";
+import MyOrders from "./pages/MyOrders";
+
 
 const App = () => {
   return (
@@ -36,6 +38,15 @@ const App = () => {
             <AdminRoute>
               <AdminUsers />
             </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/my-orders"
+          element={
+            <ProtectedRoute>
+              <MyOrders />
+            </ProtectedRoute>
           }
         />
 

@@ -2,7 +2,6 @@ import useAuth from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import VoiceSearch from "./VoiceSearch";
 
-
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -10,7 +9,6 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
-
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-blue-600">
           Tekisky Mart
@@ -36,10 +34,7 @@ const Navbar = () => {
 
           {/* ADMIN BUTTON (IMPORTANT) */}
           {user?.role === "admin" && (
-            <Link
-              to="/admin"
-              className="bg-black text-white px-3 py-1 rounded"
-            >
+            <Link to="/admin" className="bg-black text-white px-3 py-1 rounded">
               Admin
             </Link>
           )}
@@ -47,10 +42,7 @@ const Navbar = () => {
           {user ? (
             <>
               <span className="font-medium">{user.name}</span>
-              <button
-                onClick={logout}
-                className="text-red-500 font-medium"
-              >
+              <button onClick={logout} className="text-red-500 font-medium">
                 Logout
               </button>
             </>
@@ -59,7 +51,9 @@ const Navbar = () => {
               Login
             </Link>
           )}
-          
+          <Link to="/my-orders" className="block">
+            📦 My Orders
+          </Link>
         </div>
       </div>
     </nav>
@@ -67,4 +61,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
