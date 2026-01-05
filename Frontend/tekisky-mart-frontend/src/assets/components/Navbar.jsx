@@ -1,7 +1,7 @@
 import useAuth from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import VoiceSearch from "./VoiceSearch";
-
+import ProfileDropdown from "./ProfileDropdown";
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -41,19 +41,14 @@ const Navbar = () => {
 
           {user ? (
             <>
-              <span className="font-medium">{user.name}</span>
-              <button onClick={logout} className="text-red-500 font-medium">
-                Logout
-              </button>
+              <ProfileDropdown user={user} onLogout={logout} />
             </>
           ) : (
             <Link to="/login" className="font-medium">
               Login
             </Link>
           )}
-          <Link to="/my-orders" className="block">
-            📦 My Orders
-          </Link>
+          {user && <Link to="/my-orders">📦 My Orders</Link>}
         </div>
       </div>
     </nav>
