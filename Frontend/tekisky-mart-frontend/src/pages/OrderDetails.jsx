@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import OrderStatusTracker from "../assets/components/OrderStatusTracker";
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -32,9 +33,30 @@ const OrderDetails = () => {
 
       {/* Order Info */}
       <div className="mb-6">
-        <p><strong>Order ID:</strong> {order._id}</p>
-        <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
-        <p><strong>Status:</strong> {order.orderStatus}</p>
+        <p>
+          <strong>Order ID:</strong> {order._id}
+        </p>
+        <p>
+          <strong>Date:</strong>{" "}
+          {new Date(order.createdAt).toLocaleDateString()}
+        </p>
+
+        {/* Order Progress */}
+        <OrderStatusTracker status={order.orderStatus} />
+
+        {/* Estimated Delivery Date */}
+        {order.estimatedDeliveryDate && order.orderStatus !== "Delivered" && (
+          <p className="mt-3 text-green-700 font-medium">
+            🚚 Estimated Delivery:{" "}
+            {new Date(order.estimatedDeliveryDate).toDateString()}
+          </p>
+        )}
+
+        {order.orderStatus === "Delivered" && (
+          <p className="mt-3 text-green-700 font-semibold">
+            ✅ Delivered Successfully
+          </p>
+        )}
       </div>
 
       {/* Customer Info */}

@@ -112,3 +112,31 @@ export const toggleBlockUser = async (req, res) => {
   }
 };
 
+
+/**
+ * @desc   Set estimated delivery date
+ * @route  PUT /api/admin/orders/:id/delivery
+ * @access Admin
+ */
+export const setEstimatedDelivery = async (req, res) => {
+  try {
+    const { date } = req.body;
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    order.estimatedDeliveryDate = date;
+    await order.save();
+
+    res.json({
+      message: "Estimated delivery date updated",
+      estimatedDeliveryDate: order.estimatedDeliveryDate
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+

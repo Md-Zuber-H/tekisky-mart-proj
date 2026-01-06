@@ -6,7 +6,7 @@ const statusOptions = [
   "Processing",
   "Shipped",
   "Delivered",
-  "Cancelled"
+  "Cancelled",
 ];
 
 const AdminOrders = () => {
@@ -19,8 +19,8 @@ const AdminOrders = () => {
         "http://localhost:5000/api/admin/orders",
         {
           headers: {
-            Authorization: `Bearer ${userInfo.token}`
-          }
+            Authorization: `Bearer ${userInfo.token}`,
+          },
         }
       );
       setOrders(data);
@@ -37,23 +37,40 @@ const AdminOrders = () => {
         { status },
         {
           headers: {
-            Authorization: `Bearer ${userInfo.token}`
-          }
+            Authorization: `Bearer ${userInfo.token}`,
+          },
         }
       );
 
       // update UI instantly
-      setOrders(prev =>
-        prev.map(order =>
-          order._id === orderId
-            ? { ...order, orderStatus: status }
-            : order
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId ? { ...order, orderStatus: status } : order
         )
       );
     } catch (error) {
       console.error(error);
       alert("Failed to update order status");
     }
+  };
+  const updateDeliveryDate = async (orderId, date) => {
+    await axios.put(
+      `http://localhost:5000/api/admin/orders/${orderId}/delivery`,
+      { date },
+      {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+    );
+
+    setOrders((prev) =>
+      prev.map((order) =>
+        order._id === orderId
+          ? { ...order, estimatedDeliveryDate: date }
+          : order
+      )
+    );
   };
 
   return (
@@ -68,11 +85,12 @@ const AdminOrders = () => {
             <th className="border p-2">Total</th>
             <th className="border p-2">Status</th>
             <th className="border p-2">Date</th>
+            <th className="border p-2">Est. Delivery</th>
           </tr>
         </thead>
 
         <tbody>
-          {orders.map(order => (
+          {orders.map((order) => (
             <tr key={order._id}>
               <td className="border p-2">{order._id}</td>
 
@@ -87,12 +105,10 @@ const AdminOrders = () => {
               <td className="border p-2">
                 <select
                   value={order.orderStatus}
-                  onChange={(e) =>
-                    updateStatus(order._id, e.target.value)
-                  }
+                  onChange={(e) => updateStatus(order._id, e.target.value)}
                   className="border p-1 rounded"
                 >
-                  {statusOptions.map(status => (
+                  {statusOptions.map((status) => (
                     <option key={status} value={status}>
                       {status}
                     </option>
@@ -102,6 +118,20 @@ const AdminOrders = () => {
 
               <td className="border p-2">
                 {new Date(order.createdAt).toLocaleDateString()}
+              </td>
+              <td className="border p-2">
+                <input
+                  type="date"
+                  value={
+                    order.estimatedDeliveryDate
+                      ? order.estimatedDeliveryDate.split("T")[0]
+                      : ""
+                  }
+                  onChange={(e) =>
+                    updateDeliveryDate(order._id, e.target.value)
+                  }
+                  className="border p-1 rounded"
+                />
               </td>
             </tr>
           ))}

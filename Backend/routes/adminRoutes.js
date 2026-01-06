@@ -4,6 +4,8 @@ import { protect } from "../middleware/authMiddleware.js";
 import  {isAdmin}  from "../middleware/adminMiddleware.js";
 import { updateOrderStatus } from "../controllers/adminController.js";
 import { toggleBlockUser } from "../controllers/adminController.js";
+import { setEstimatedDelivery } from "../controllers/adminController.js";
+
 
 
 
@@ -14,6 +16,7 @@ router.get("/stats", protect, isAdmin, getAdminStats);
 router.get("/orders", protect, isAdmin, getAllOrders);
 router.put("/orders/:id/status",protect,isAdmin, updateOrderStatus);
 router.put("/users/:id/block",protect,isAdmin,toggleBlockUser);
+router.put("/orders/:id/delivery",protect,isAdmin,setEstimatedDelivery);
 
 
 export default router;
