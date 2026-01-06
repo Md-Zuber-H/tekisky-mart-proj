@@ -14,4 +14,6 @@ router.get("/", getProducts);
 router.post("/", protect, isAdmin, upload.array("images", 3), createProduct);
 router.delete("/:id", protect, isAdmin, deleteProduct);
 router.put("/:id", protect, isAdmin, updateProduct);
+router.put("/:id",protect,isAdmin,upload.array("images", 3),updateProduct);
+
 export default router;

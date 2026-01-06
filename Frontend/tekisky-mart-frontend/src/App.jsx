@@ -6,6 +6,7 @@ import ProtectedRoute from "./assets/components/ProtectedRoute";
 import AdminRoute from "./assets/components/AdminRoute";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminOrders from "./pages/admin/OrdersAdmin";
+import AdminProducts from "./pages/admin/AdminProducts";
 
 // Pages
 import Home from "./pages/Home";
@@ -49,6 +50,15 @@ const App = () => {
             </AdminRoute>
           }
         />
+        <Route
+          path="/admin/products"
+          element={
+            <AdminRoute>
+              <AdminProducts/>
+            </AdminRoute>
+          }
+        />
+
         <Route
           path="/order/:id"
           element={

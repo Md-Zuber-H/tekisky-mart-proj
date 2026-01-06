@@ -14,8 +14,8 @@ const Dashboard = () => {
           "http://localhost:5000/api/admin/stats",
           {
             headers: {
-              Authorization: `Bearer ${userInfo.token}`
-            }
+              Authorization: `Bearer ${userInfo.token}`,
+            },
           }
         );
         setStats(data);
@@ -50,18 +50,16 @@ const Dashboard = () => {
           ➕ Add Product
         </Link>
 
-        <Link
-          to="/admin/users"
-          className="block text-blue-600 font-medium"
-        >
+        <Link to="/admin/users" className="block text-blue-600 font-medium">
           👥 View Customers
         </Link>
 
-        <Link
-          to="/admin/orders"
-          className="block text-blue-600 font-medium"
-        >
+        <Link to="/admin/orders" className="block text-blue-600 font-medium">
           📦 View Orders
+        </Link>
+
+        <Link to="/admin/products" className="block mt-4 text-blue-600">
+          📦 Manage Products
         </Link>
       </div>
     </div>

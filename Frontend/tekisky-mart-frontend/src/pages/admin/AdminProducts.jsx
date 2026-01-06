@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -44,30 +45,55 @@ const AdminProducts = () => {
       <table className="w-full border">
         <thead className="bg-gray-200">
           <tr>
+            <th className="border p-2">Image</th>
             <th className="border p-2">Name</th>
+            <th className="border p-2">Description</th>
             <th className="border p-2">Price</th>
-            <th className="border p-2">Action</th>
+            <th className="border p-2">Stock</th>
+            <th className="border p-2">Actions</th>
           </tr>
         </thead>
 
         <tbody>
           {products.map((product) => (
-            <tr key={product._id}>
-              <td className="border p-2">{product.name}</td>
+            <tr key={product._id} className="align-top">
+              {/* Image */}
+              <td className="border p-2">
+                <img
+                  src={product.images?.[0]}
+                  alt={product.name}
+                  className="w-20 h-20 object-cover rounded"
+                />
+              </td>
+
+              {/* Name */}
+              <td className="border p-2 font-medium">{product.name}</td>
+
+              {/* Description */}
+              <td className="border p-2 text-sm text-gray-600 max-w-xs">
+                {product.description}
+              </td>
+
+              {/* Price */}
               <td className="border p-2">₹{product.price}</td>
-              <td className="border p-2 space-x-2">
+
+              {/* Stock */}
+              <td className="border p-2">{product.stock}</td>
+
+              {/* Actions */}
+              <td className="border p-2 space-y-2">
                 <Link
                   to={`/admin/product/${product._id}/edit`}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+                  className="block bg-yellow-500 text-white px-3 py-1 rounded text-center"
                 >
-                  Edit
+                  ✏️ Edit
                 </Link>
 
                 <button
                   onClick={() => deleteProductHandler(product._id)}
-                  className="bg-red-600 text-white px-3 py-1 rounded"
+                  className="block w-full bg-red-600 text-white px-3 py-1 rounded"
                 >
-                  Delete
+                  ❌ Delete
                 </button>
               </td>
             </tr>

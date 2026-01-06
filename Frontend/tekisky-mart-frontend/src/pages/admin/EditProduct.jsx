@@ -12,6 +12,9 @@ const EditProduct = () => {
   const [stock, setStock] = useState("");
   const [description, setDescription] = useState("");
 
+  const [productImages, setProductImages] = useState([]);
+  const [images, setImages] = useState(null);
+
   useEffect(() => {
     const fetchProduct = async () => {
       const { data } = await axios.get(
@@ -22,6 +25,7 @@ const EditProduct = () => {
       setPrice(data.price);
       setStock(data.stock);
       setDescription(data.description);
+      setProductImages(data.images || []);
     };
 
     fetchProduct();
@@ -30,20 +34,24 @@ const EditProduct = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    await axios.put(
-      `http://localhost:5000/api/products/${id}`,
-      {
-        name,
-        price,
-        stock,
-        description
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${userInfo.token}`
-        }
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", price);
+    formData.append("stock", stock);
+    formData.append("description", description);
+
+    if (images) {
+      for (let i = 0; i < images.length; i++) {
+        formData.append("images", images[i]);
       }
-    );
+    }
+
+    await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
     alert("Product updated successfully");
     navigate("/admin/products");
@@ -52,8 +60,29 @@ const EditProduct = () => {
   return (
     <div className="max-w-xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Edit Product</h1>
+      <div className="flex gap-3 mb-4">
+        {productImages.map((img, index) => (
+          <img
+            key={index}
+            src={img}
+            alt="product"
+            className="w-20 h-20 object-cover rounded border"
+          />
+        ))}
+      </div>
 
       <form onSubmit={submitHandler} className="space-y-4">
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={(e) => setImages(e.target.files)}
+          className="w-full border p-2"
+        />
+        <p className="text-sm text-gray-500">
+          Uploading new images will replace existing ones
+        </p>
+
         <input
           className="w-full border p-2"
           value={name}

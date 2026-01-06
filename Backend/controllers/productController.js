@@ -69,17 +69,29 @@ export const updateProduct = async (req, res) => {
     const { name, description, price, discount, stock, category } = req.body;
 
     const product = await Product.findById(req.params.id);
-
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    // update text fields
     product.name = name || product.name;
     product.description = description || product.description;
     product.price = price || product.price;
     product.discount = discount || product.discount;
     product.stock = stock || product.stock;
     product.category = category || product.category;
+
+    // 🔥 update images ONLY if new images uploaded
+    if (req.files && req.files.length > 0) {
+      const imageUrls = [];
+
+      for (let file of req.files.slice(0, 3)) {
+        const url = await uploadToCloudinary(file.buffer);
+        imageUrls.push(url);
+      }
+
+      product.images = imageUrls; // replace old images
+    }
 
     const updatedProduct = await product.save();
     res.json(updatedProduct);
