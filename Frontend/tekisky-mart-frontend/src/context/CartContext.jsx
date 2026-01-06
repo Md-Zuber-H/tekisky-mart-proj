@@ -19,13 +19,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        fetchCart,
-        addToCart
-      }}
-    >
+    <CartContext.Provider value={{ cart, fetchCart, addToCart, removeItem }}>
       {children}
     </CartContext.Provider>
   );
@@ -34,4 +28,9 @@ export const CartProvider = ({ children }) => {
 // ✅ custom hook (IMPORTANT)
 export const useCart = () => {
   return useContext(CartContext);
+};
+
+const removeItem = async (productId) => {
+  await cartService.removeFromCart(productId);
+  fetchCart();
 };

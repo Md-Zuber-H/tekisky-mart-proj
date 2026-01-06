@@ -45,10 +45,23 @@ export const getCart = async (req, res) => {
 };
 
 export const removeFromCart = async (req, res) => {
-  const cart = await Cart.findOne({ user: req.user._id });
-  cart.items = cart.items.filter(
-    (item) => item.product.toString() !== req.params.productId
-  );
-  await cart.save();
-  res.json(cart);
+  try {
+    const { productId } = req.params;
+
+    const cart = await Cart.findOne({ user: req.user._id });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    cart.items = cart.items.filter(
+      (item) => item.product.toString() !== productId
+    );
+
+    await cart.save();
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ message: "Remove from cart failed" });
+  }
 };
+
+

@@ -8,5 +8,6 @@ router.use(protect);
 router.post("/", addToCart);
 router.get("/", getCart);
 router.delete("/:productId", removeFromCart);
+router.delete("/:productId", protect, removeFromCart);
 
 export default router;
