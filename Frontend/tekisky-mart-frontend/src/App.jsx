@@ -20,6 +20,7 @@ import Register from "./pages/Register";
 // import Dashboard from "./pages/admin/Dashboard";
 import MyOrders from "./pages/MyOrders";
 import OrderDetails from "./pages/OrderDetails";
+import EditProduct from "./pages/admin/EditProduct";
 
 const App = () => {
   return (
@@ -40,7 +41,14 @@ const App = () => {
             </AdminRoute>
           }
         />
-
+        <Route
+          path="/admin/product/:id/edit"
+          element={
+            <AdminRoute>
+              <EditProduct />
+            </AdminRoute>
+          }
+        />
         <Route
           path="/order/:id"
           element={

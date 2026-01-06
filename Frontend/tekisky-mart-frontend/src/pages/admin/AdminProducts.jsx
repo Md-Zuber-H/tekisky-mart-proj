@@ -8,9 +8,7 @@ const AdminProducts = () => {
   // 🔹 FETCH PRODUCTS
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/products"
-      );
+      const { data } = await axios.get("http://localhost:5000/api/products");
       setProducts(data);
     };
 
@@ -26,19 +24,14 @@ const AdminProducts = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(
-        `http://localhost:5000/api/products/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${userInfo.token}`
-          }
-        }
-      );
+      await axios.delete(`http://localhost:5000/api/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      });
 
       // update UI instantly
-      setProducts((prev) =>
-        prev.filter((p) => p._id !== id)
-      );
+      setProducts((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {
       alert("Failed to delete product");
     }
@@ -62,11 +55,16 @@ const AdminProducts = () => {
             <tr key={product._id}>
               <td className="border p-2">{product.name}</td>
               <td className="border p-2">₹{product.price}</td>
-              <td className="border p-2">
+              <td className="border p-2 space-x-2">
+                <Link
+                  to={`/admin/product/${product._id}/edit`}
+                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+                >
+                  Edit
+                </Link>
+
                 <button
-                  onClick={() =>
-                    deleteProductHandler(product._id)
-                  }
+                  onClick={() => deleteProductHandler(product._id)}
                   className="bg-red-600 text-white px-3 py-1 rounded"
                 >
                   Delete

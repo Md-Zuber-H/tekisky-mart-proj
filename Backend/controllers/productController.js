@@ -59,3 +59,31 @@ export const deleteProduct = async (req, res) => {
   await Product.findByIdAndDelete(req.params.id);
   res.json({ message: "Product deleted" });
 };
+
+
+// @desc   Update product
+// @route  PUT /api/products/:id
+// @access Admin
+export const updateProduct = async (req, res) => {
+  try {
+    const { name, description, price, discount, stock, category } = req.body;
+
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.name = name || product.name;
+    product.description = description || product.description;
+    product.price = price || product.price;
+    product.discount = discount || product.discount;
+    product.stock = stock || product.stock;
+    product.category = category || product.category;
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
