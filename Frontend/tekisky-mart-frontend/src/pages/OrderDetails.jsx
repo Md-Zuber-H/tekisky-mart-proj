@@ -1,13 +1,43 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import OrderStatusTracker from "../assets/components/OrderStatusTracker";
 
 const OrderDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [order, setOrder] = useState(null);
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+  const cancelOrderHandler = async () => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this order?"
+    );
+    if (!confirmCancel) return;
+
+    try {
+      await axios.put(
+        `http://localhost:5000/api/orders/${order._id}/cancel`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
+
+      alert("Order cancelled successfully");
+
+      // update UI instantly
+      setOrder((prev) => ({
+        ...prev,
+        orderStatus: "Cancelled",
+      }));
+    } catch (error) {
+      alert(error.response?.data?.message || "Order cannot be cancelled");
+    }
+  };
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -15,8 +45,8 @@ const OrderDetails = () => {
         `http://localhost:5000/api/orders/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${userInfo.token}`
-          }
+            Authorization: `Bearer ${userInfo.token}`,
+          },
         }
       );
       setOrder(data);
@@ -58,6 +88,28 @@ const OrderDetails = () => {
           </p>
         )}
       </div>
+      <p>
+        <strong>Status:</strong>{" "}
+        <span
+          className={
+            order.orderStatus === "Cancelled"
+              ? "text-red-600 font-semibold"
+              : "text-green-600 font-semibold"
+          }
+        >
+          {order.orderStatus}
+        </span>
+      </p>
+
+      {/* ❌ CANCEL BUTTON */}
+      {["Pending", "Processing"].includes(order.orderStatus) && (
+        <button
+          onClick={cancelOrderHandler}
+          className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Cancel Order
+        </button>
+      )}
 
       {/* Customer Info */}
       <div className="mb-6">
@@ -82,9 +134,7 @@ const OrderDetails = () => {
               <td className="border p-2">{item.product.name}</td>
               <td className="border p-2">{item.qty}</td>
               <td className="border p-2">₹{item.price}</td>
-              <td className="border p-2">
-                ₹{item.qty * item.price}
-              </td>
+              <td className="border p-2">₹{item.qty * item.price}</td>
             </tr>
           ))}
         </tbody>

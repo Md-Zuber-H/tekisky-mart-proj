@@ -1,29 +1,27 @@
 import { useState, useEffect } from "react";
-
 import api from "../../services/api";
 
 const AddProduct = () => {
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const { data } = await axios.get("http://localhost:5000/api/categories");
-      setCategories(data);
-    };
-    fetchCategories();
-  }, []);
+  const [images, setImages] = useState([]);
 
   const [form, setForm] = useState({
     name: "",
     description: "",
     price: "",
     discount: "",
-    stock: "",
-    category: "",
+    stock: ""
   });
 
-  const [images, setImages] = useState([]);
+  // 🔹 Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data } = await api.get("/categories");
+      setCategories(data);
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,6 +33,11 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!category) {
+      alert("Please select a category");
+      return;
+    }
 
     if (images.length > 3) {
       alert("Maximum 3 images allowed");
@@ -48,17 +51,19 @@ const AddProduct = () => {
       formData.append(key, form[key]);
     });
 
-    // image files
+    // category (ONLY ONCE)
+    formData.append("category", category);
+
+    // images
     for (let i = 0; i < images.length; i++) {
       formData.append("images", images[i]);
-      formData.append("category", category);
     }
 
     try {
       await api.post("/products", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-        },
+          "Content-Type": "multipart/form-data"
+        }
       });
 
       alert("✅ Product added successfully");
@@ -69,9 +74,9 @@ const AddProduct = () => {
         description: "",
         price: "",
         discount: "",
-        stock: "",
-        category: "",
+        stock: ""
       });
+      setCategory("");
       setImages([]);
     } catch (error) {
       alert(error.response?.data?.message || "Failed to add product");
@@ -88,51 +93,49 @@ const AddProduct = () => {
           value={form.name}
           onChange={handleChange}
           placeholder="Product Name"
-          className="input"
+          className="w-full border p-2"
+          required
         />
+
         <textarea
           name="description"
           value={form.description}
           onChange={handleChange}
           placeholder="Description"
-          className="input"
+          className="w-full border p-2"
+          required
         />
+
         <input
+          type="number"
           name="price"
           value={form.price}
           onChange={handleChange}
           placeholder="Price"
-          className="input"
+          className="w-full border p-2"
+          required
         />
+
         <input
+          type="number"
           name="discount"
           value={form.discount}
           onChange={handleChange}
           placeholder="Discount %"
-          className="input"
+          className="w-full border p-2"
         />
+
         <input
+          type="number"
           name="stock"
           value={form.stock}
           onChange={handleChange}
           placeholder="Stock"
-          className="input"
-        />
-        <input
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          placeholder="Category ID"
-          className="input"
+          className="w-full border p-2"
+          required
         />
 
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-
+        {/* ✅ CATEGORY DROPDOWN */}
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -146,6 +149,14 @@ const AddProduct = () => {
             </option>
           ))}
         </select>
+
+        {/* IMAGES */}
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleImageChange}
+        />
 
         <button className="bg-blue-600 text-white px-4 py-2 rounded w-full">
           Add Product

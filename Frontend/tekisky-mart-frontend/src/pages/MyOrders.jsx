@@ -26,6 +26,37 @@ const MyOrders = () => {
     fetchMyOrders();
   }, []);
 
+  // 🔴 CANCEL ORDER HANDLER
+  const cancelOrderHandler = async (orderId) => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this order?"
+    );
+    if (!confirmCancel) return;
+
+    try {
+      const { data } = await axios.put(
+        `http://localhost:5000/api/orders/${orderId}/cancel`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
+
+      // update UI instantly
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId ? data.order : order
+        )
+      );
+    } catch (error) {
+      alert(
+        error.response?.data?.message || "Order cannot be cancelled"
+      );
+    }
+  };
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">My Orders</h1>
@@ -49,14 +80,40 @@ const MyOrders = () => {
               <tr key={order._id}>
                 <td className="border p-2">{order._id}</td>
                 <td className="border p-2">₹{order.totalPrice}</td>
-                <td className="border p-2">{order.orderStatus}</td>
+
+                <td className="border p-2">
+                  <span
+                    className={
+                      order.orderStatus === "Cancelled"
+                        ? "text-red-600 font-semibold"
+                        : "text-green-600 font-semibold"
+                    }
+                  >
+                    {order.orderStatus}
+                  </span>
+                </td>
+
                 <td className="border p-2">
                   {new Date(order.createdAt).toLocaleDateString()}
                 </td>
-                <td className="border p-2">
-                  <Link to={`/order/${order._id}`} className="text-blue-600">
+
+                <td className="border p-2 space-x-3">
+                  <Link
+                    to={`/order/${order._id}`}
+                    className="text-blue-600"
+                  >
                     View
                   </Link>
+
+                  {/* ❌ CANCEL BUTTON (ONLY IF ALLOWED) */}
+                  {/* {["Pending", "Processing"].includes(order.orderStatus) && (
+                    <button
+                      onClick={() => cancelOrderHandler(order._id)}
+                      className="text-red-600 hover:underline"
+                    >
+                      Cancel
+                    </button>
+                  )} */}
                 </td>
               </tr>
             ))}

@@ -1,8 +1,9 @@
 import express from "express";
-import { placeOrder, getMyOrders, updateOrderStatus } from "../controllers/orderController.js";
+import { placeOrder, getMyOrders, updateOrderStatus,getOrderById,cancelOrder } from "../controllers/orderController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/adminMiddleware.js";
-import { getOrderById } from "../controllers/orderController.js";
+
+
 
 const router = express.Router();
 
@@ -11,6 +12,8 @@ router.get("/my", protect, getMyOrders);
 router.put("/:id", protect, isAdmin, updateOrderStatus);
 router.get("/my", protect, getMyOrders);
 router.get("/:id", protect, getOrderById);
+router.put("/:id/cancel", protect, cancelOrder);
+
 
 
 export default router;

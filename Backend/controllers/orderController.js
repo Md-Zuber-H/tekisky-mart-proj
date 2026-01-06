@@ -6,7 +6,7 @@ import Cart from "../models/Cart.js";
 // ==============================
 export const placeOrder = async (req, res) => {
   try {
-    const { address } = req.body;
+    const { shippingAddress } = req.body;
 
     const cart = await Cart.findOne({ user: req.user._id })
       .populate("items.product");
@@ -101,6 +101,38 @@ export const getOrderById = async (req, res) => {
     }
 
     res.json(order);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// ==============================
+// USER CANCEL ORDER
+// ==============================
+export const cancelOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // 🔐 Only owner can cancel
+    if (order.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // ❌ Cannot cancel after shipping
+    if (["Shipped", "Delivered"].includes(order.orderStatus)) {
+      return res
+        .status(400)
+        .json({ message: "Order cannot be cancelled now" });
+    }
+
+    order.orderStatus = "Cancelled";
+    await order.save();
+
+    res.json({ message: "Order cancelled successfully", order });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

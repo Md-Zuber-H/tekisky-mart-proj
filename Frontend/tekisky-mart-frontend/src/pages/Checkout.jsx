@@ -22,7 +22,7 @@ const Checkout = () => {
       });
 
       await fetchCart(); // refresh cart after clearing
-      navigate(`/order-success/${order._id}`);
+      navigate(`/my-orders`);
     } catch (error) {
       alert("Order failed");
     }

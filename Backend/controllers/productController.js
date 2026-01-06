@@ -38,28 +38,38 @@ export const getProducts = async (req, res) => {
     const limit = 10;
     const skip = (page - 1) * limit;
 
-    const keyword = req.query.keyword
-      ? { $text: { $search: req.query.keyword } }
-      : {};
+    const filter = {};
 
-    const categoryFilter = req.query.category
-      ? { category: req.query.category }
-      : {};
+    // 🔍 keyword search
+    if (req.query.keyword) {
+      filter.$text = { $search: req.query.keyword };
+    }
 
-    const products = await Product.find({
-      ...keyword,
-      ...categoryFilter
-    })
+    // 🏷️ category filter
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+
+    // 🔢 total count (VERY IMPORTANT)
+    const totalProducts = await Product.countDocuments(filter);
+
+    const products = await Product.find(filter)
       .populate("category", "name")
       .skip(skip)
       .limit(limit);
 
-    res.json(products);
+    res.json({
+      products,
+      page,
+      pages: Math.ceil(totalProducts / limit),
+      totalProducts
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 
@@ -107,3 +117,5 @@ export const updateProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
