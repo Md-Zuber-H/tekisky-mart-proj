@@ -7,32 +7,31 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 
 const Navbar = () => {
-    // 🔍 Search state
+  // 🔍 Search state
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const highlightMatch = (text, query) => {
-  if (!query) return text;
+    if (!query) return text;
 
-  const regex = new RegExp(`(${query})`, "ig");
-  const parts = text.split(regex);
+    const regex = new RegExp(`(${query})`, "ig");
+    const parts = text.split(regex);
 
-  return parts.map((part, i) =>
-    part.toLowerCase() === query.toLowerCase() ? (
-      <span key={i} className="font-bold text-blue-600">
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-};
+    return parts.map((part, i) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <span key={i} className="font-bold text-blue-600">
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { cart } = useCart();
   const [animate, setAnimate] = useState(false);
-
 
   // calculate count safely
   const cartCount = cart?.items?.length || cart?.cartItems?.length || 0;
@@ -59,7 +58,11 @@ const Navbar = () => {
 
   const handleSearch = (text) => {
     if (!text.trim()) return;
+
+    setQuery(text);
     setSuggestions([]);
+    setActiveIndex(-1);
+
     navigate(`/products?keyword=${text}`);
   };
 
@@ -92,20 +95,28 @@ const Navbar = () => {
   }, [query]);
 
   const handleKeyDown = (e) => {
-    if (!suggestions.length) return;
-
     if (e.key === "ArrowDown") {
       setActiveIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+      return;
     }
 
     if (e.key === "ArrowUp") {
       setActiveIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+      return;
     }
 
     if (e.key === "Enter") {
-      const selected = activeIndex >= 0 ? suggestions[activeIndex].name : query;
+      // 🔥 AUTO-SELECT TOP SUGGESTION
+      if (suggestions.length > 0) {
+        const selected =
+          activeIndex >= 0
+            ? suggestions[activeIndex].name
+            : suggestions[0].name; // 👈 KEY FIX
 
-      handleSearch(selected);
+        handleSearch(selected);
+      } else {
+        handleSearch(query);
+      }
     }
   };
 

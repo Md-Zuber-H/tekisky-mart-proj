@@ -114,8 +114,8 @@ const OrderDetails = () => {
       {/* Customer Info */}
       <div className="mb-6">
         <h2 className="font-semibold mb-2">Customer</h2>
-        <p>{order.user.name}</p>
-        <p>{order.user.email}</p>
+        <p>{order.user?.name || "Customer"}</p>
+        <p>{order.user?.email || "N/A"}</p>
       </div>
 
       {/* Items Table */}
@@ -131,10 +131,19 @@ const OrderDetails = () => {
         <tbody>
           {order.orderItems.map((item, index) => (
             <tr key={index}>
-              <td className="border p-2">{item.product.name}</td>
-              <td className="border p-2">{item.qty}</td>
-              <td className="border p-2">₹{item.price}</td>
-              <td className="border p-2">₹{item.qty * item.price}</td>
+              <td className="border p-2">
+                {item.product?.name || "Product removed"}
+              </td>
+
+              <td className="border p-2">{item.quantity}</td>
+
+              <td className="border p-2">
+                ₹{item.product?.price ?? item.price}
+              </td>
+
+              <td className="border p-2">
+                ₹{item.quantity * (item.product?.price ?? item.price)}
+              </td>
             </tr>
           ))}
         </tbody>

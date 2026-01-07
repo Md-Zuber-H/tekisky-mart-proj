@@ -19,12 +19,17 @@ const orderSchema = new mongoose.Schema(
       }
     ],
     shippingAddress: {
-      fullName: String,
-      address: String,
-      city: String,
-      pincode: String,
-      phone: String
-    },
+  fullName: String,
+  address: String,
+  city: String,
+  pincode: String,
+  phone: String,
+  location: {
+    lat: Number,
+    lng: Number
+  }
+}
+,
     totalPrice: {
       type: Number,
       required: true
