@@ -7,14 +7,32 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 
 const Navbar = () => {
+    // 🔍 Search state
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const highlightMatch = (text, query) => {
+  if (!query) return text;
+
+  const regex = new RegExp(`(${query})`, "ig");
+  const parts = text.split(regex);
+
+  return parts.map((part, i) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+      <span key={i} className="font-bold text-blue-600">
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { cart } = useCart();
   const [animate, setAnimate] = useState(false);
-  // 🔍 Search state
-  const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(-1);
+
 
   // calculate count safely
   const cartCount = cart?.items?.length || cart?.cartItems?.length || 0;
