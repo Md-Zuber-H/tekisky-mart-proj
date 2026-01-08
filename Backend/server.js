@@ -14,12 +14,8 @@ import categoryRoutes from "./routes/categoryRoutes.js"
 
 connectDB();
 
-// ✅ ENV CHECK (TEMP — remove later)
-console.log("Cloudinary Check:", {
-  cloud: process.env.CLOUDINARY_CLOUD_NAME,
-  key: process.env.CLOUDINARY_API_KEY ? "OK" : "MISSING",
-  secret: process.env.CLOUDINARY_API_SECRET ? "OK" : "MISSING"
-});
+
+
 
 const app = express();
 

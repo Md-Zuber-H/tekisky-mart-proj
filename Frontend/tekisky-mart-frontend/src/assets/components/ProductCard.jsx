@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import useAuth from "../../hooks/useAuth";
 
-const ProductCard = ({ product, showToast,onDelete }) => {
+const ProductCard = ({ product, showToast, onDelete }) => {
   const { user } = useAuth();
   const { addToCart } = useCart();
 
@@ -13,7 +13,6 @@ const ProductCard = ({ product, showToast,onDelete }) => {
 
   return (
     <div className="relative group border rounded p-3 hover:shadow-lg transition">
-      
       {/* Image */}
       <img
         src={product.images?.[0]}
@@ -24,7 +23,6 @@ const ProductCard = ({ product, showToast,onDelete }) => {
       {/* ================= USER VIEW ================= */}
       {user?.role !== "admin" && (
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
-          
           <Link
             to={`/product/${product._id}`}
             className="bg-white px-4 py-2 rounded font-medium"
@@ -45,23 +43,22 @@ const ProductCard = ({ product, showToast,onDelete }) => {
 
       {/* ================= ADMIN VIEW ================= */}
       {user?.role === "admin" && (
-  <div className="mt-3 flex gap-2">
-    <Link
-      to={`/admin/product/${product._id}/edit`}
-      className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
-    >
-      ✏️ Edit
-    </Link>
+        <div className="mt-3 flex gap-2">
+          <Link
+            to={`/admin/product/${product._id}/edit`}
+            className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
+          >
+            ✏️ Edit
+          </Link>
 
-    <button
-      onClick={() => onDelete(product._id)}
-      className="bg-red-600 text-white px-3 py-1 rounded text-sm"
-    >
-      🗑 Delete
-    </button>
-  </div>
-)}
-
+          <button
+            onClick={() => onDelete(product._id)}
+            className="bg-red-600 text-white px-3 py-1 rounded text-sm"
+          >
+            🗑 Delete
+          </button>
+        </div>
+      )}
 
       {/* Details */}
       <h3 className="mt-2 font-semibold truncate">{product.name}</h3>

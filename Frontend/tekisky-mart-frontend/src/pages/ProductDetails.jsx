@@ -1,13 +1,23 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../services/api";
-import { addToCart } from "../services/cartService";
+import { useCart } from "../context/CartContext";
+import { useToast } from "../context/ToastContext";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const location = useLocation();
   const fromCart = location.state?.from === "cart";
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { showToast } = useToast();
+
+const addToCartHandler = async () => {
+  await addToCart(product);
+  showToast(`Added to cart: ${product.name}`);
+};
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -44,17 +54,15 @@ const ProductDetails = () => {
         <p className="mt-3 text-xl font-bold text-blue-600">₹{product.price}</p>
 
         <div className="mt-4 flex gap-3">
-          {/* ADD TO CART → only if NOT from cart */}
           {!fromCart && (
             <button
-              onClick={() => addToCart(product._id, 1)}
+              onClick={() => addToCartHandler(product)}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               Add to Cart
             </button>
           )}
 
-          {/* BUY NOW → always visible */}
           <button
             onClick={() => navigate("/checkout")}
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"

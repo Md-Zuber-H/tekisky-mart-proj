@@ -1,43 +1,94 @@
 import Category from "../models/Category.js";
+import uploadToCloudinary from "../utils/cloudinaryUpload.js";
 
-// ADMIN: create category
+// ===============================
+// ADMIN: CREATE CATEGORY
+// ===============================
 export const createCategory = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, type } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: "Category name is required" });
+    }
 
     const exists = await Category.findOne({ name });
     if (exists) {
       return res.status(400).json({ message: "Category already exists" });
     }
 
-    const category = await Category.create({ name });
+    // 🔒 validation
+    if (type === "trending" && !req.file) {
+      return res
+        .status(400)
+        .json({ message: "Trending category requires an image" });
+    }
+
+    let imageUrl = "";
+    if (req.file) {
+      imageUrl = await uploadToCloudinary(req.file.buffer);
+    }
+
+    const category = await Category.create({
+      name,
+      type: type || "regular",
+      image: imageUrl
+    });
+
     res.status(201).json(category);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// USER: get all categories
+// ===============================
+// USER: GET CATEGORIES
+// ===============================
 export const getCategories = async (req, res) => {
-  const categories = await Category.find().sort({ name: 1 });
+  const filter = {};
+
+  if (req.query.type) {
+    filter.type = req.query.type;
+  }
+
+  const categories = await Category.find(filter).sort({ name: 1 });
   res.json(categories);
 };
 
+// ===============================
+// ADMIN: UPDATE CATEGORY
+// ===============================
 export const updateCategory = async (req, res) => {
-  const category = await Category.findById(req.params.id);
+  try {
+    const { name, type } = req.body;
 
-  if (!category) {
-    return res.status(404).json({ message: "Category not found" });
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    category.name = name || category.name;
+    category.type = type || category.type;
+
+    if (type === "trending" && req.file) {
+      category.image = await uploadToCloudinary(req.file.buffer);
+    }
+
+    if (type === "regular") {
+      category.image = ""; // remove image if switched to regular
+    }
+
+    await category.save();
+    res.json(category);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-
-  category.name = req.body.name || category.name;
-  await category.save();
-
-  res.json(category);
 };
 
+// ===============================
+// ADMIN: DELETE CATEGORY
+// ===============================
 export const deleteCategory = async (req, res) => {
   await Category.findByIdAndDelete(req.params.id);
   res.json({ message: "Category deleted" });
 };
-
