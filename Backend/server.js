@@ -11,6 +11,7 @@ import { apiLimiter } from "./middleware/rateLimit.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js"
+import bannerRoutes from "./routes/bannerRoutes.js"
 
 connectDB();
 
@@ -31,6 +32,7 @@ app.use("/api/orders", orderRoutes);
 app.use(errorHandler);
 app.use("/api/admin", adminRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/banners", bannerRoutes);
 
 
 const PORT = process.env.PORT || 5000;
