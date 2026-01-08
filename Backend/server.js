@@ -35,6 +35,9 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/banners", bannerRoutes);
 
 
+
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

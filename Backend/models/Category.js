@@ -8,23 +8,13 @@ const categorySchema = new mongoose.Schema(
       unique: true,
       trim: true
     },
-
-    // 🔥 category type
     type: {
       type: String,
       enum: ["trending", "regular"],
       default: "regular"
     },
-
-    // 🔥 image only for trending categories
     image: {
-      type: String,
-      default: ""
-    },
-
-    isActive: {
-      type: Boolean,
-      default: true
+      type: String // only for trending
     }
   },
   { timestamps: true }

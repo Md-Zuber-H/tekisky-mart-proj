@@ -23,6 +23,8 @@ import MyOrders from "./pages/MyOrders";
 import OrderDetails from "./pages/OrderDetails";
 import EditProduct from "./pages/admin/EditProduct";
 import AdminCategories from "./pages/admin/AdminCategories";
+import AdminBanners from "./pages/admin/AdminBanners";
+import Categories from "./pages/Categories";
 
 const App = () => {
   return (
@@ -35,6 +37,9 @@ const App = () => {
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin/banners" element={<AdminBanners />} />
+        <Route path="/categories" element={<Categories />} />
+
         <Route
           path="/admin/users"
           element={

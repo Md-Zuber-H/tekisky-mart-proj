@@ -1,5 +1,10 @@
 import express from "express";
-import { getCategories, createCategory,updateCategory,deleteCategory } from "../controllers/categoryController.js";
+import { getCategories, 
+    createCategory,
+    updateCategory,deleteCategory ,  
+    getTrendingCategories,
+    getRegularCategories
+} from "../controllers/categoryController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import {isAdmin} from "../middleware/adminMiddleware.js";
 import multer from "multer"
@@ -11,5 +16,7 @@ router.get("/", getCategories);
 router.post("/", protect, isAdmin,upload.single("image"), createCategory);
 router.put("/:id", protect, isAdmin,upload.single("image"), updateCategory);
 router.delete("/:id", protect, isAdmin, deleteCategory);
+router.get("/trending", getTrendingCategories);
+router.get("/regular", getRegularCategories);
 
 export default router;

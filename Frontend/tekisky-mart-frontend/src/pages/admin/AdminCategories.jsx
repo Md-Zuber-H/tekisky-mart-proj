@@ -53,7 +53,16 @@ const AdminCategories = () => {
     fetchCategories();
   };
 
-  
+  const toggleCategoryType = async (cat) => {
+    const newType = cat.type === "trending" ? "regular" : "trending";
+
+    await api.put(`/categories/${cat._id}`, {
+      name: cat.name,
+      type: newType,
+    });
+
+    fetchCategories();
+  };
 
   return (
     <div className="max-w-xl mx-auto p-6">
@@ -113,14 +122,22 @@ const AdminCategories = () => {
 
           <div className="space-x-3">
             <button
+              onClick={() => toggleCategoryType(cat)}
+              className="text-green-600 text-sm"
+            >
+              {cat.type === "trending" ? "Make Regular" : "Make Trending"}
+            </button>
+
+            <button
               onClick={() => editHandler(cat)}
-              className="text-blue-600"
+              className="text-blue-600 text-sm"
             >
               Edit
             </button>
+
             <button
               onClick={() => deleteHandler(cat._id)}
-              className="text-red-600"
+              className="text-red-600 text-sm"
             >
               Delete
             </button>

@@ -64,6 +64,12 @@ const Dashboard = () => {
         <Link to="/admin/categories" className="block mt-2 text-blue-600">
           📂 Manage Categories
         </Link>
+        <Link
+          to="/admin/banners"
+          className="block p-4 border rounded hover:bg-gray-100"
+        >
+          🖼 Manage Banners
+        </Link>
       </div>
     </div>
   );

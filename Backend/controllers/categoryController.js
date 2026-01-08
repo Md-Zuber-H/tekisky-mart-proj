@@ -92,3 +92,29 @@ export const deleteCategory = async (req, res) => {
   await Category.findByIdAndDelete(req.params.id);
   res.json({ message: "Category deleted" });
 };
+
+
+// GET TRENDING CATEGORIES
+export const getTrendingCategories = async (req, res) => {
+  try {
+    const categories = await Category.find({ type: "trending" })
+      .limit(7)
+      .sort({ createdAt: -1 });
+
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET REGULAR CATEGORIES
+export const getRegularCategories = async (req, res) => {
+  try {
+    const categories = await Category.find({ type: "regular" })
+      .sort({ name: 1 });
+
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
