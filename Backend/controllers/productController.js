@@ -216,5 +216,19 @@ export const rateProduct = async (req, res) => {
 
 
 
+// ==============================
+// ADMIN: GET ALL PRODUCT RATINGS
+// ==============================
+export const getAllRatings = async (req, res) => {
+  try {
+    const products = await Product.find({})
+      .select("name ratings averageRating")
+      .populate("ratings.user", "name email");
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 

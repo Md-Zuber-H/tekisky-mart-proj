@@ -25,6 +25,7 @@ import EditProduct from "./pages/admin/EditProduct";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminBanners from "./pages/admin/AdminBanners";
 import Categories from "./pages/Categories";
+import AdminRatings from "./pages/admin/AdminRatings";
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/admin/banners" element={<AdminBanners />} />
         <Route path="/categories" element={<Categories />} />
+        <Route path="/admin/ratings" element={<AdminRatings />} />
 
         <Route
           path="/admin/users"

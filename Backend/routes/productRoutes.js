@@ -6,10 +6,15 @@ import {
   deleteProduct,
   updateProduct,
   rateProduct,
-  getSearchSuggestions
+  getSearchSuggestions,
+  getAllRatings 
 } from "../controllers/productController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import {isAdmin }from "../middleware/adminMiddleware.js";
+
+
+
+
 
 const router = express.Router();
 
@@ -41,6 +46,8 @@ router.put(
   upload.array("images", 3),
   updateProduct
 );
+
+router.get("/admin/ratings", protect, isAdmin, getAllRatings);
 
 router.delete("/:id", protect, isAdmin, deleteProduct);
 

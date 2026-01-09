@@ -70,6 +70,9 @@ const Dashboard = () => {
         >
           🖼 Manage Banners
         </Link>
+        <Link to="/admin/ratings" className="block px-4 py-2 hover:bg-gray-200">
+          ⭐ Product Ratings
+        </Link>
       </div>
     </div>
   );
