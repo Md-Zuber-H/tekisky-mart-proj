@@ -8,6 +8,12 @@ export const placeOrder = async (req, res) => {
   try {
     const { shippingAddress } = req.body;
 
+    if (!shippingAddress || !shippingAddress.address) {
+      return res.status(400).json({
+        message: "Delivery address is required"
+      });
+    }
+
     const cart = await Cart.findOne({ user: req.user._id })
       .populate("items.product");
 
@@ -139,4 +145,17 @@ export const cancelOrder = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+
+export const canUserRate = async (req, res) => {
+  const { productId } = req.params;
+
+  const order = await Order.findOne({
+    user: req.user._id,
+    orderStatus: "Delivered",
+    "orderItems.product": productId
+  });
+
+  res.json({ canRate: !!order });
 };

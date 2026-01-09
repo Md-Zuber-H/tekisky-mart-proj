@@ -19,7 +19,10 @@ const orderSchema = new mongoose.Schema(
         price: Number,
         quantity: Number
       }
-    ],
+    ],estimatedDeliveryDate: {
+  type: Date
+},
+
 
     shippingAddress: {
       fullName: { type: String, required: true },

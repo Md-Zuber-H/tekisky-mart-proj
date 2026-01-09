@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import OrderStatusTracker from "../assets/components/OrderStatusTracker";
+import RatingForm from "../assets/components/RatingForm";
 
 const OrderDetails = () => {
   const navigate = useNavigate();
@@ -88,6 +89,17 @@ const OrderDetails = () => {
           </p>
         )}
       </div>
+      {/* ⭐ RATING SECTION */}
+      {order.orderStatus === "Delivered" && (
+        <div className="mt-8 border-t pt-6">
+          <h2 className="text-lg font-semibold mb-4">⭐ Rate your products</h2>
+
+          {order.orderItems.map((item) => (
+            <RatingForm key={item.product?._id} productId={item.product?._id} />
+          ))}
+        </div>
+      )}
+
       <p>
         <strong>Status:</strong>{" "}
         <span

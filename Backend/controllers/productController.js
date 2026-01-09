@@ -1,7 +1,7 @@
 import Product from "../models/Product.js";
 import uploadToCloudinary from "../utils/cloudinaryUpload.js";
 import Category from "../models/Category.js";
-
+import Order from "../models/Order.js";
 
 export const createProduct = async (req, res) => {
   try {
@@ -39,21 +39,26 @@ export const getProducts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const filter = {};
+    let sort = { createdAt: -1 };
 
-    // 🔍 keyword search
+    // 🔍 SEARCH
     if (req.query.keyword) {
       filter.$text = { $search: req.query.keyword };
+      sort = { score: { $meta: "textScore" } };
     }
 
-    // 🏷️ category filter
+    // 🏷️ CATEGORY
     if (req.query.category) {
       filter.category = req.query.category;
     }
 
-    // 🔢 total count (VERY IMPORTANT)
     const totalProducts = await Product.countDocuments(filter);
 
-    const products = await Product.find(filter)
+    const products = await Product.find(
+      filter,
+      req.query.keyword ? { score: { $meta: "textScore" } } : {}
+    )
+      .sort(sort) // 🔥 IMPORTANT
       .populate("category", "name")
       .skip(skip)
       .limit(limit);
@@ -62,13 +67,13 @@ export const getProducts = async (req, res) => {
       products,
       page,
       pages: Math.ceil(totalProducts / limit),
-      totalProducts
+      totalProducts,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 
@@ -83,6 +88,7 @@ export const deleteProduct = async (req, res) => {
 // @route  PUT /api/products/:id
 // @access Admin
 export const updateProduct = async (req, res) => {
+  
   try {
     const { name, description, price, discount, stock, category } = req.body;
 
@@ -140,6 +146,75 @@ export const getSearchSuggestions = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+
+
+// ==============================
+// RATE PRODUCT (USER)
+// ==============================
+// import Product from "../models/Product.js";
+// import Order from "../models/Order.js";
+
+
+
+
+export const rateProduct = async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+    const productId = req.params.id;
+    const userId = req.user._id;
+
+    // 1️⃣ Check delivered order with this product
+    const order = await Order.findOne({
+      user: userId,
+      orderStatus: "Delivered",
+      "orderItems.product": productId
+    });
+
+    if (!order) {
+      return res
+        .status(403)
+        .json({ message: "You can rate only after delivery" });
+    }
+
+    // 2️⃣ Find product
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // 3️⃣ Prevent duplicate rating
+    const alreadyRated = product.ratings.find(
+      (r) => r.user.toString() === userId.toString()
+    );
+
+    if (alreadyRated) {
+      return res.status(400).json({ message: "Already rated" });
+    }
+
+    // 4️⃣ Push rating
+    product.ratings.push({
+      user: userId,
+      rating,
+      comment
+    });
+
+    // 5️⃣ Calculate average
+    product.averageRating =
+      product.ratings.reduce((sum, r) => sum + r.rating, 0) /
+      product.ratings.length;
+
+    await product.save();
+
+    res.json({ message: "Rating submitted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Rating failed" });
+  }
+};
+
+
 
 
 

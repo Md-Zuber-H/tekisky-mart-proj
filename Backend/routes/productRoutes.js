@@ -1,24 +1,52 @@
 import express from "express";
 import multer from "multer";
-import { createProduct, getProducts, deleteProduct } from "../controllers/productController.js";
+import {
+  createProduct,
+  getProducts,
+  deleteProduct,
+  updateProduct,
+  rateProduct,
+  getSearchSuggestions
+} from "../controllers/productController.js";
 import { protect } from "../middleware/authMiddleware.js";
-import  { isAdmin } from "../middleware/adminMiddleware.js";
-import { updateProduct } from "../controllers/productController.js";
-import { getSearchSuggestions } from "../controllers/productController.js";
-
-
-
+import {isAdmin }from "../middleware/adminMiddleware.js";
 
 const router = express.Router();
+
+// multer config
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// ==============================
+// PUBLIC
+// ==============================
 router.get("/", getProducts);
 router.get("/suggestions", getSearchSuggestions);
-router.post("/", protect, isAdmin, upload.array("images", 3), createProduct);
-router.delete("/:id", protect, isAdmin, deleteProduct);
-router.put("/:id", protect, isAdmin, updateProduct);
-router.put("/:id",protect,isAdmin,upload.array("images", 3),updateProduct);
 
+// ==============================
+// ADMIN
+// ==============================
+router.post(
+  "/",
+  protect,
+  isAdmin,
+  upload.array("images", 3),
+  createProduct
+);
+
+router.put(
+  "/:id",
+  protect,
+  isAdmin,
+  upload.array("images", 3),
+  updateProduct
+);
+
+router.delete("/:id", protect, isAdmin, deleteProduct);
+
+// ==============================
+// USER (RATING)
+// ==============================
+router.post("/:id/rate", protect, rateProduct);
 
 export default router;
